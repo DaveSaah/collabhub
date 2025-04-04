@@ -78,7 +78,7 @@ class _SignupScreenState extends State<SignupScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const ProfileView()),
+          MaterialPageRoute(builder: (context) => const ProfileView()),
         );
       }
     } catch (e) {
