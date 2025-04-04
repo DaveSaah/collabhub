@@ -1,6 +1,8 @@
+import 'package:collabhub/views/profile_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:collabhub/views/signup_page.dart';
+import 'package:collabhub/services/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +15,40 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
+  void _loginUser() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both email and password')),
+      );
+      return;
+    }
+
+    try {
+      await _authService.signInWithEmailAndPassword(email, password);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Login successful')));
+      }
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileView()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: ${e.toString()}')),
+        );
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -197,9 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Sign In Button
                 ElevatedButton(
-                  onPressed: () {
-                    // Implement login functionality
-                  },
+                  onPressed: _loginUser,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.symmetric(vertical: 16),
