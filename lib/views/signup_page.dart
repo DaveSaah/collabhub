@@ -1,8 +1,8 @@
 import 'package:collabhub/services/auth.dart' show AuthService;
+import 'package:collabhub/views/project_listings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collabhub/views/profile_page.dart'; // make sure this exists
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -53,7 +53,7 @@ class _SignupScreenState extends State<SignupScreen> {
     });
 
     try {
-    userCredential = await _authService.registerWithEmailAndPassword(
+      userCredential = await _authService.registerWithEmailAndPassword(
         email,
         password,
       );
@@ -78,7 +78,9 @@ class _SignupScreenState extends State<SignupScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileView()),
+          MaterialPageRoute(
+            builder: (context) => const ProjectListingsScreen(),
+          ),
         );
       }
     } catch (e) {

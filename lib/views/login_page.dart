@@ -1,6 +1,5 @@
 import 'package:collabhub/views/profile_page.dart';
 import 'package:flutter/material.dart';
-
 import 'package:collabhub/views/signup_page.dart';
 import 'package:collabhub/services/auth.dart';
 
