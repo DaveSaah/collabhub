@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "229949339803",
+    "project_id": "collabhub-ashesi",
+    "storage_bucket": "collabhub-ashesi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229949339803:android:1d1c3afd0881573e552e3e",
+        "android_client_info": {
+          "package_name": "com.example.collabhub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGBpjRRwJ8MAFW6FDoH1RiAjgjecz67-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
