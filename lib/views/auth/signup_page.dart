@@ -11,7 +11,7 @@ class SignupScreen extends StatefulWidget {
   State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupScreenState extends State<SignupScreen> { 
   bool _isLoading = false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _obscureText = true;
@@ -21,30 +21,185 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  bool _acceptedTerms = false;
 
   final AuthService _authService = AuthService();
+
+  // Validation functions
+  bool _isValidAshesiEmail(String email) {
+    return email.isNotEmpty &&
+        email.contains('@') &&
+        email.toLowerCase().endsWith('@ashesi.edu.gh');
+  }
+
+  bool _isValidPassword(String password) {
+    // Check if password is at least 8 characters with uppercase, symbol, and number
+    RegExp hasUppercase = RegExp(r'[A-Z]');
+    RegExp hasSymbol = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+    RegExp hasNumber = RegExp(r'[0-9]');
+    
+    return password.length >= 8 && 
+           hasUppercase.hasMatch(password) && 
+           hasSymbol.hasMatch(password) && 
+           hasNumber.hasMatch(password);
+  }
+
+  // Show custom popup dialog
+  void _showCustomDialog({
+    required String title,
+    required String message,
+    required IconData icon,
+    required Color color,
+    VoidCallback? onDismiss,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  offset: const Offset(0, 4),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 36,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    if (onDismiss != null) {
+                      onDismiss();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 24,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Future<void> registerUser() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-    final confirmPassword = _confirmPasswordController.text.trim();
+    final password = _passwordController.text;
+    final confirmPassword = _confirmPasswordController.text;
     UserCredential? userCredential;
 
-    if (name.isEmpty ||
-        email.isEmpty ||
-        password.isEmpty ||
-        confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
+    // Check if all fields are filled
+    if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      _showCustomDialog(
+        title: 'Missing Information',
+        message: 'Please fill in all fields',
+        icon: Icons.error_outline,
+        color: Colors.orange,
       );
       return;
     }
 
+    // Validate email format
+    if (!_isValidAshesiEmail(email)) {
+      _showCustomDialog(
+        title: 'Invalid Email',
+        message: 'Please enter a valid Ashesi email address (@ashesi.edu.gh)',
+        icon: Icons.email_outlined,
+        color: Colors.red,
+      );
+      return;
+    }
+
+    // Validate password requirements
+    if (!_isValidPassword(password)) {
+      _showCustomDialog(
+        title: 'Invalid Password',
+        message: 'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character',
+        icon: Icons.lock_outlined,
+        color: Colors.red,
+      );
+      return;
+    }
+
+    // Check if passwords match
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      _showCustomDialog(
+        title: 'Password Mismatch',
+        message: 'Passwords do not match. Please ensure both passwords are identical.',
+        icon: Icons.lock_outlined,
+        color: Colors.red,
+      );
+      return;
+    }
+
+    // Check if terms are accepted
+    if (!_acceptedTerms) {
+      _showCustomDialog(
+        title: 'Terms Not Accepted',
+        message: 'Please accept the Terms of Service and Privacy Policy to continue',
+        icon: Icons.gavel_outlined,
+        color: Colors.orange,
+      );
       return;
     }
 
@@ -57,42 +212,85 @@ class _SignupScreenState extends State<SignupScreen> {
         email,
         password,
       );
+
+      try {
+        // Save name to Firestore
+        final uid = userCredential.user?.uid;
+        await _firestore.collection('users').doc(uid).set({
+          'name': name,
+          'email': email,
+          'createdAt': Timestamp.now(),
+        });
+
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          
+          _showCustomDialog(
+            title: 'Success',
+            message: 'Account created successfully! Welcome to CollabHub.',
+            icon: Icons.check_circle_outline,
+            color: Colors.green,
+            onDismiss: () {
+              if (mounted) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProjectListingsScreen(),
+                  ),
+                );
+              }
+            },
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          
+          _showCustomDialog(
+            title: 'Account Created',
+            message: 'Your account was created, but we couldn\'t save your profile data: ${e.toString()}',
+            icon: Icons.warning_amber_outlined,
+            color: Colors.orange,
+          );
+        }
+      }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Signup failed: ${e.toString()}')),
-        );
-      }
-    }
+        setState(() {
+          _isLoading = false;
+        });
 
-    try {
-      // Save name to Firestore
-      final uid = userCredential!.user?.uid;
-      await _firestore.collection('users').doc(uid).set({
-        'name': name,
-        'email': email,
-        'createdAt': Timestamp.now(),
-      });
-
-      // Navigate to profile screen
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProjectListingsScreen(),
-          ),
+        String errorMessage = 'Registration failed';
+        IconData errorIcon = Icons.error_outline;
+        
+        // Handle specific error cases
+        if (e.toString().contains('network')) {
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          errorIcon = Icons.signal_wifi_off;
+        } else if (e.toString().contains('email-already-in-use')) {
+          errorMessage = 'An account already exists with this email address. Please sign in instead.';
+          errorIcon = Icons.person_outline;
+        } else if (e.toString().contains('weak-password')) {
+          errorMessage = 'The password you provided is too weak. Please choose a stronger password.';
+          errorIcon = Icons.lock_outline;
+        } else if (e.toString().contains('invalid-email')) {
+          errorMessage = 'The email address is not valid. Please check and try again.';
+          errorIcon = Icons.email_outlined;
+        } else {
+          errorMessage = 'Registration failed: ${e.toString()}';
+        }
+        
+        _showCustomDialog(
+          title: 'Registration Failed',
+          message: errorMessage,
+          icon: errorIcon,
+          color: Colors.red,
         );
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unable to save user data: ${e.toString()}')),
-        );
-      }
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -253,7 +451,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   child: TextField(
                     controller: _emailController,
                     decoration: const InputDecoration(
-                      hintText: 'janvier@ashesi.edu.gh',
+                      hintText: 'youremail@ashesi.edu.gh',
                       border: InputBorder.none,
                       prefixIcon: Icon(
                         Icons.email_outlined,
@@ -310,6 +508,19 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 8),
+                // Password hint text
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Text(
+                    "Password must be at least 8 characters with uppercase, number, and symbol",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
 
                 // Confirm Password Label
@@ -362,8 +573,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 Row(
                   children: [
                     Checkbox(
-                      value: false,
-                      onChanged: (value) {},
+                      value: _acceptedTerms,
+                      onChanged: (value) {
+                        setState(() {
+                          _acceptedTerms = value ?? false;
+                        });
+                      },
                       activeColor: Colors.deepPurple,
                     ),
                     Expanded(
@@ -397,7 +612,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
                 // Sign Up Button
                 ElevatedButton(
-                  onPressed: registerUser,
+                  onPressed: _isLoading ? null : registerUser,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -406,33 +621,32 @@ class _SignupScreenState extends State<SignupScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child:
-                      _isLoading
-                          ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              'Create Account',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
                               ),
                             ),
-                          )
-                          : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text(
-                                'Create Account',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(Icons.arrow_forward, size: 18),
-                            ],
-                          ),
+                            SizedBox(width: 8),
+                            Icon(Icons.arrow_forward, size: 18),
+                          ],
+                        ),
                 ),
                 const SizedBox(height: 24),
 
