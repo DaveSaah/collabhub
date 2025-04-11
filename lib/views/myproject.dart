@@ -13,21 +13,18 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
     {
       'title': 'Mobile Banking App',
       'role': 'Team Lead',
-      'progress': 0.7,
       'dueDate': '2025-05-15',
       'members': 4,
     },
     {
       'title': 'Learning Management System',
       'role': 'Developer',
-      'progress': 0.4,
       'dueDate': '2025-06-30',
       'members': 6,
     },
     {
       'title': 'Campus Navigation Tool',
       'role': 'UI Designer',
-      'progress': 0.9,
       'dueDate': '2025-04-20',
       'members': 3,
     },
@@ -191,48 +188,6 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Progress',
-                                      style: TextStyle(
-                                        color: Colors.grey[700],
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${(project['progress'] * 100).round()}%',
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: LinearProgressIndicator(
-                                    value: project['progress'],
-                                    backgroundColor: Colors.grey[200],
-                                    minHeight: 8,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           ],
                         ),
                       ),
@@ -246,29 +201,29 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                         ),
                         child: Row(
                           children: [
-                            Expanded(
-                              child: TextButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(Icons.task_alt),
-                                label: const Text('Tasks'),
-                                style: TextButton.styleFrom(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                ),
-                              ),
-                            ),
+                            // Expanded(
+                            //   child: TextButton.icon(
+                            //     onPressed: () {},
+                            //     icon: const Icon(Icons.task_alt),
+                            //     label: const Text('Tasks'),
+                            //     style: TextButton.styleFrom(
+                            //       padding:
+                            //           const EdgeInsets.symmetric(vertical: 16),
+                            //     ),
+                            //   ),
+                            // ),
                             Container(height: 24, width: 1, color: Colors.grey[300]),
-                            Expanded(
-                              child: TextButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(Icons.chat_outlined),
-                                label: const Text('Chat'),
-                                style: TextButton.styleFrom(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                ),
-                              ),
-                            ),
+                            // Expanded(
+                            //   child: TextButton.icon(
+                            //     onPressed: () {},
+                            //     icon: const Icon(Icons.chat_outlined),
+                            //     label: const Text('Chat'),
+                            //     style: TextButton.styleFrom(
+                            //       padding:
+                            //           const EdgeInsets.symmetric(vertical: 16),
+                            //     ),
+                            //   ),
+                            // ),
                             Container(height: 24, width: 1, color: Colors.grey[300]),
                             Expanded(
                               child: TextButton.icon(
