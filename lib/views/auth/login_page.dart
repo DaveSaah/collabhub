@@ -2,9 +2,10 @@ import 'package:collabhub/views/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:collabhub/views/auth/signup_page.dart';
 import 'package:collabhub/services/auth.dart';
+import 'package:collabhub/views/project_listings.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key}); 
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -16,13 +17,125 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
 
+  // Validation functions
+  bool _isValidAshesiEmail(String email) {
+    return email.isNotEmpty && 
+           email.contains('@') && 
+           email.toLowerCase().endsWith('@ashesi.edu.gh');
+  }
+
+  // Show custom popup dialog
+  void _showCustomDialog({
+    required String title,
+    required String message,
+    required IconData icon,
+    required Color color,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  offset: const Offset(0, 4),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 36,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 24,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _loginUser() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
+    // Validate fields
     if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter both email and password')),
+      _showCustomDialog(
+        title: 'Missing Information',
+        message: 'Please enter both email and password',
+        icon: Icons.error_outline,
+        color: Colors.orange,
+      );
+      return;
+    }
+
+    // Validate email format
+    if (!_isValidAshesiEmail(email)) {
+      _showCustomDialog(
+        title: 'Invalid Email',
+        message: 'Please enter a valid Ashesi email address (@ashesi.edu.gh)',
+        icon: Icons.email_outlined,
+        color: Colors.red,
       );
       return;
     }
@@ -30,20 +143,51 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await _authService.signInWithEmailAndPassword(email, password);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Login successful')));
-      }
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ProfileView()),
+        _showCustomDialog(
+          title: 'Success',
+          message: 'Login successful. Welcome back!',
+          icon: Icons.check_circle_outline,
+          color: Colors.green,
         );
+        
+        // Add a slight delay before navigation for better UX
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          if (mounted) {
+            Navigator.of(context).pop(); // Dismiss dialog
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ProjectListingsScreen()),
+            );
+          }
+        });
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: ${e.toString()}')),
+        String errorMessage = 'Login failed';
+        IconData errorIcon = Icons.error_outline;
+        
+        // Handle specific error cases
+        if (e.toString().contains('network')) {
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          errorIcon = Icons.signal_wifi_off;
+        } else if (e.toString().contains('user-not-found')) {
+          errorMessage = 'No account found with this email. Please check your email or sign up.';
+          errorIcon = Icons.person_outline;
+        } else if (e.toString().contains('wrong-password')) {
+          errorMessage = 'Incorrect password. Please try again.';
+          errorIcon = Icons.lock_outline;
+        } else if (e.toString().contains('too-many-requests')) {
+          errorMessage = 'Too many failed login attempts. Please try again later.';
+          errorIcon = Icons.access_time;
+        } else {
+          errorMessage = 'Login failed: ${e.toString()}';
+        }
+        
+        _showCustomDialog(
+          title: 'Login Failed',
+          message: errorMessage,
+          icon: errorIcon,
+          color: Colors.red,
         );
       }
     }
@@ -171,7 +315,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
-                      hintText: 'janvier@ashesi.edu.gh',
+                      hintText: 'youremail@ashesi.edu.gh',
                       border: InputBorder.none,
                       prefixIcon: const Icon(
                         Icons.email_outlined,
@@ -293,25 +437,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // Forgot Password
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      // Navigate to forgot password screen
-                    },
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      foregroundColor: Colors.deepPurple,
-                    ),
-                    child: const Text(
-                      "Forgot Password",
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
