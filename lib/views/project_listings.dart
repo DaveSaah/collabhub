@@ -241,10 +241,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
         elevation: 0,
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined), 
-            onPressed: () {},
-          ),
         ],
       ),
       body: Column(
@@ -257,10 +253,10 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
               decoration: InputDecoration(
                 hintText: 'Search projects...',
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.tune),
-                  onPressed: () {},
-                ),
+                // suffixIcon: IconButton(
+                //   icon: const Icon(Icons.tune),
+                //   onPressed: () {},
+                // ),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
@@ -392,7 +388,7 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                                     child: TextButton.icon(
                                       onPressed: () {
                                         ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text('Joined ${project['title']}!')),
+                                          SnackBar(content: Text('Joined ${project['title']}!')), // abeiku do your magic here ;)
                                         );
                                       },
                                       icon: const Icon(Icons.group_add_outlined),
@@ -415,7 +411,9 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          // abeiku do your magic here
+        },
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
