@@ -1,11 +1,13 @@
+import 'package:collabhub/views/account_settings.dart';
 import 'package:collabhub/views/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:collabhub/views/auth/signup_page.dart';
 import 'package:collabhub/services/auth.dart';
 import 'package:collabhub/views/project_listings.dart';
+import 'package:collabhub/views/chat_list_page.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key}); 
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -19,9 +21,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Validation functions
   bool _isValidAshesiEmail(String email) {
-    return email.isNotEmpty && 
-           email.contains('@') && 
-           email.toLowerCase().endsWith('@ashesi.edu.gh');
+    return email.isNotEmpty &&
+        email.contains('@') &&
+        email.toLowerCase().endsWith('@ashesi.edu.gh');
   }
 
   // Show custom popup dialog
@@ -62,11 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: color.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 36,
-                  ),
+                  child: Icon(icon, color: color, size: 36),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -80,10 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   message,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade700,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -149,14 +144,19 @@ class _LoginScreenState extends State<LoginScreen> {
           icon: Icons.check_circle_outline,
           color: Colors.green,
         );
-        
+
         // Add a slight delay before navigation for better UX
-        Future.delayed(const Duration(milliseconds: 1500), () {
+        Future.delayed(const Duration(milliseconds: 1500), () async {
           if (mounted) {
             Navigator.of(context).pop(); // Dismiss dialog
+            await Future.delayed(
+              const Duration(milliseconds: 300),
+            ); // Wait for dialog to close
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const ProjectListingsScreen()),
+              MaterialPageRoute(
+                builder: (context) => const ProjectListingsScreen(),
+              ),
             );
           }
         });
@@ -165,24 +165,27 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         String errorMessage = 'Login failed';
         IconData errorIcon = Icons.error_outline;
-        
+
         // Handle specific error cases
         if (e.toString().contains('network')) {
-          errorMessage = 'Network error. Please check your internet connection and try again.';
+          errorMessage =
+              'Network error. Please check your internet connection and try again.';
           errorIcon = Icons.signal_wifi_off;
         } else if (e.toString().contains('user-not-found')) {
-          errorMessage = 'No account found with this email. Please check your email or sign up.';
+          errorMessage =
+              'No account found with this email. Please check your email or sign up.';
           errorIcon = Icons.person_outline;
         } else if (e.toString().contains('wrong-password')) {
           errorMessage = 'Incorrect password. Please try again.';
           errorIcon = Icons.lock_outline;
         } else if (e.toString().contains('too-many-requests')) {
-          errorMessage = 'Too many failed login attempts. Please try again later.';
+          errorMessage =
+              'Too many failed login attempts. Please try again later.';
           errorIcon = Icons.access_time;
         } else {
           errorMessage = 'Login failed: ${e.toString()}';
         }
-        
+
         _showCustomDialog(
           title: 'Login Failed',
           message: errorMessage,
