@@ -199,7 +199,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 (context) => PopupDialog(
                   title: 'Account Created',
                   message:
-                      'Your account was created, but we couldn\'t save your profile data: ${e.toString()}',
+                      'Your account was created, but we couldn\'t save your profile data',
                   icon: Icons.warning_amber_outlined,
                   color: Colors.orange,
                 ),
