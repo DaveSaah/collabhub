@@ -508,6 +508,7 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
         // Navigate to Collabs screen
         Navigator.push(
           context,
+  
           MaterialPageRoute(builder: (context) => const CollabsScreen()),
         ).then((_) {
           // When returning to this screen, ensure the index is reset to 0
