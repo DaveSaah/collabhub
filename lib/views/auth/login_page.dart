@@ -147,9 +147,11 @@ class _LoginScreenState extends State<LoginScreen> {
         Future.delayed(const Duration(milliseconds: 1500), () async {
           if (mounted) {
             Navigator.of(context).pop(); // Dismiss dialog
-            await Future.delayed(
-              const Duration(milliseconds: 300),
-            ); // Wait for dialog to close
+          }
+          await Future.delayed(
+            const Duration(milliseconds: 300),
+          ); // Wait for dialog to close
+          if (mounted) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
