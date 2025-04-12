@@ -11,7 +11,7 @@ class SignupScreen extends StatefulWidget {
   State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> { 
+class _SignupScreenState extends State<SignupScreen> {
   bool _isLoading = false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _obscureText = true;
@@ -37,11 +37,11 @@ class _SignupScreenState extends State<SignupScreen> {
     RegExp hasUppercase = RegExp(r'[A-Z]');
     RegExp hasSymbol = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
     RegExp hasNumber = RegExp(r'[0-9]');
-    
-    return password.length >= 8 && 
-           hasUppercase.hasMatch(password) && 
-           hasSymbol.hasMatch(password) && 
-           hasNumber.hasMatch(password);
+
+    return password.length >= 8 &&
+        hasUppercase.hasMatch(password) &&
+        hasSymbol.hasMatch(password) &&
+        hasNumber.hasMatch(password);
   }
 
   // Show custom popup dialog
@@ -69,7 +69,7 @@ class _SignupScreenState extends State<SignupScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withAlpha(25),
                   offset: const Offset(0, 4),
                   blurRadius: 10,
                 ),
@@ -81,14 +81,10 @@ class _SignupScreenState extends State<SignupScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withAlpha(25),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 36,
-                  ),
+                  child: Icon(icon, color: color, size: 36),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -102,10 +98,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 Text(
                   message,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade700,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -149,7 +142,10 @@ class _SignupScreenState extends State<SignupScreen> {
     UserCredential? userCredential;
 
     // Check if all fields are filled
-    if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (name.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       _showCustomDialog(
         title: 'Missing Information',
         message: 'Please fill in all fields',
@@ -174,7 +170,8 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_isValidPassword(password)) {
       _showCustomDialog(
         title: 'Invalid Password',
-        message: 'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character',
+        message:
+            'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character',
         icon: Icons.lock_outlined,
         color: Colors.red,
       );
@@ -185,7 +182,8 @@ class _SignupScreenState extends State<SignupScreen> {
     if (password != confirmPassword) {
       _showCustomDialog(
         title: 'Password Mismatch',
-        message: 'Passwords do not match. Please ensure both passwords are identical.',
+        message:
+            'Passwords do not match. Please ensure both passwords are identical.',
         icon: Icons.lock_outlined,
         color: Colors.red,
       );
@@ -196,7 +194,8 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_acceptedTerms) {
       _showCustomDialog(
         title: 'Terms Not Accepted',
-        message: 'Please accept the Terms of Service and Privacy Policy to continue',
+        message:
+            'Please accept the Terms of Service and Privacy Policy to continue',
         icon: Icons.gavel_outlined,
         color: Colors.orange,
       );
@@ -226,7 +225,7 @@ class _SignupScreenState extends State<SignupScreen> {
           setState(() {
             _isLoading = false;
           });
-          
+
           _showCustomDialog(
             title: 'Success',
             message: 'Account created successfully! Welcome to CollabHub.',
@@ -249,10 +248,11 @@ class _SignupScreenState extends State<SignupScreen> {
           setState(() {
             _isLoading = false;
           });
-          
+
           _showCustomDialog(
             title: 'Account Created',
-            message: 'Your account was created, but we couldn\'t save your profile data: ${e.toString()}',
+            message:
+                'Your account was created, but we couldn\'t save your profile data: ${e.toString()}',
             icon: Icons.warning_amber_outlined,
             color: Colors.orange,
           );
@@ -266,24 +266,18 @@ class _SignupScreenState extends State<SignupScreen> {
 
         String errorMessage = 'Registration failed';
         IconData errorIcon = Icons.error_outline;
-        
+
         // Handle specific error cases
         if (e.toString().contains('network')) {
-          errorMessage = 'Network error. Please check your internet connection and try again.';
+          errorMessage =
+              'Network error. Please check your internet connection and try again.';
           errorIcon = Icons.signal_wifi_off;
-        } else if (e.toString().contains('email-already-in-use')) {
-          errorMessage = 'An account already exists with this email address. Please sign in instead.';
-          errorIcon = Icons.person_outline;
-        } else if (e.toString().contains('weak-password')) {
-          errorMessage = 'The password you provided is too weak. Please choose a stronger password.';
-          errorIcon = Icons.lock_outline;
-        } else if (e.toString().contains('invalid-email')) {
-          errorMessage = 'The email address is not valid. Please check and try again.';
+        } else if (e.toString().contains('email address is already in use')) {
+          errorMessage =
+              'The email address is already in use by another account.';
           errorIcon = Icons.email_outlined;
-        } else {
-          errorMessage = 'Registration failed: ${e.toString()}';
         }
-        
+
         _showCustomDialog(
           title: 'Registration Failed',
           message: errorMessage,
@@ -621,32 +615,33 @@ class _SignupScreenState extends State<SignupScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              'Create Account',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
+                  child:
+                      _isLoading
+                          ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
                               ),
                             ),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward, size: 18),
-                          ],
-                        ),
+                          )
+                          : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text(
+                                'Create Account',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Icon(Icons.arrow_forward, size: 18),
+                            ],
+                          ),
                 ),
                 const SizedBox(height: 24),
 
