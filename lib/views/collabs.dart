@@ -16,7 +16,7 @@ class _CollabsScreenState extends State<CollabsScreen> {
       'email': 'alex.johnson@ashesi.edu.gh',
       'projects': 3,
       'imageUrl': 'https://i.pravatar.cc/150?img=1',
-      'skills': ['UI Design', 'Prototyping', 'User Research']
+      'skills': ['UI Design', 'Prototyping', 'User Research'],
     },
     {
       'name': 'Maya Patel',
@@ -24,7 +24,7 @@ class _CollabsScreenState extends State<CollabsScreen> {
       'email': 'maya.patel@ashesi.edu.gh',
       'projects': 5,
       'imageUrl': 'https://i.pravatar.cc/150?img=5',
-      'skills': ['Python', 'Django', 'PostgreSQL']
+      'skills': ['Python', 'Django', 'PostgreSQL'],
     },
     {
       'name': 'David Osei',
@@ -32,7 +32,7 @@ class _CollabsScreenState extends State<CollabsScreen> {
       'email': 'david.osei@ashesi.edu.gh',
       'projects': 2,
       'imageUrl': 'https://i.pravatar.cc/150?img=8',
-      'skills': ['Flutter', 'Firebase', 'Dart']
+      'skills': ['Flutter', 'Firebase', 'Dart'],
     },
     {
       'name': 'Sarah Mensah',
@@ -40,7 +40,7 @@ class _CollabsScreenState extends State<CollabsScreen> {
       'email': 'sarah.mensah@ashesi.edu.gh',
       'projects': 7,
       'imageUrl': 'https://i.pravatar.cc/150?img=10',
-      'skills': ['Agile', 'Scrum', 'Team Leadership']
+      'skills': ['Agile', 'Scrum', 'Team Leadership'],
     },
     {
       'name': 'Kwame Adu',
@@ -48,7 +48,7 @@ class _CollabsScreenState extends State<CollabsScreen> {
       'email': 'kwame.adu@ashesi.edu.gh',
       'projects': 4,
       'imageUrl': 'https://i.pravatar.cc/150?img=12',
-      'skills': ['React', 'JavaScript', 'CSS']
+      'skills': ['React', 'JavaScript', 'CSS'],
     },
   ];
 
@@ -64,11 +64,16 @@ class _CollabsScreenState extends State<CollabsScreen> {
 
   void _filterCollaborators(String query) {
     setState(() {
-      filteredCollaborators = collaborators
-          .where((collab) =>
-              collab['name']!.toLowerCase().contains(query.toLowerCase()) ||
-              collab['role']!.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      filteredCollaborators =
+          collaborators
+              .where(
+                (collab) =>
+                    collab['name']!.toLowerCase().contains(
+                      query.toLowerCase(),
+                    ) ||
+                    collab['role']!.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList();
     });
   }
 
@@ -107,7 +112,7 @@ class _CollabsScreenState extends State<CollabsScreen> {
               onChanged: _filterCollaborators,
             ),
           ),
-          
+
           // Filter chips
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -122,161 +127,183 @@ class _CollabsScreenState extends State<CollabsScreen> {
               ],
             ),
           ),
-          
+
           // Collaborators list
           Expanded(
-            child: filteredCollaborators.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.person_search,
-                          size: 64,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No collaborators found',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filteredCollaborators.length,
-                    itemBuilder: (context, index) {
-                      final collaborator = filteredCollaborators[index];
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(12),
-                          leading: CircleAvatar(
-                            radius: 28,
-                            backgroundColor: Colors.grey[200],
-                            child: Text(
-                              collaborator['name'].toString().substring(0, 1),
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple,
-                              ),
-                            ),
+            child:
+                filteredCollaborators.isEmpty
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.person_search,
+                            size: 64,
+                            color: Colors.grey[400],
                           ),
-                          title: Text(
-                            collaborator['name'],
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No collaborators found',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(color: Colors.grey[600]),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Text(
-                                collaborator['role'],
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.w500,
+                        ],
+                      ),
+                    )
+                    : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: filteredCollaborators.length,
+                      itemBuilder: (context, index) {
+                        final collaborator = filteredCollaborators[index];
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(12),
+                            leading: CircleAvatar(
+                              radius: 28,
+                              backgroundColor: Colors.grey[200],
+                              child: Text(
+                                collaborator['name'].toString().substring(0, 1),
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Wrap(
-                                spacing: 6,
-                                runSpacing: 6,
-                                children: (collaborator['skills'] as List<String>)
-                                    .take(2)
-                                    .map((skill) => Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[100],
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                          child: Text(
-                                            skill,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey[800],
-                                            ),
-                                          ),
-                                        ))
-                                    .toList()
-                                  ..add(
-                                    (collaborator['skills'] as List<String>).length > 2
-                                        ? Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[100],
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                            child: Text(
-                                              '+${(collaborator['skills'] as List<String>).length - 2}',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey[800],
+                            ),
+                            title: Text(
+                              collaborator['name'],
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Text(
+                                  collaborator['role'],
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 6,
+                                  runSpacing: 6,
+                                  children:
+                                      (collaborator['skills'] as List<String>)
+                                          .take(2)
+                                          .map(
+                                            (skill) => Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 4,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[100],
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                skill,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[800],
+                                                ),
                                               ),
                                             ),
                                           )
-                                        : Container(),
-                                  ),
-                              ),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '${collaborator['projects']} projects',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 12,
+                                          .toList()
+                                        ..add(
+                                          (collaborator['skills']
+                                                          as List<String>)
+                                                      .length >
+                                                  2
+                                              ? Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey[100],
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                child: Text(
+                                                  '+${(collaborator['skills'] as List<String>).length - 2}',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey[800],
+                                                  ),
+                                                ),
+                                              )
+                                              : Container(),
+                                        ),
+                                ),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${collaborator['projects']} projects',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 12,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Theme.of(context).colorScheme.primary,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 0),
-                                      minimumSize: const Size(80, 28),
-                                      textStyle: const TextStyle(fontSize: 12),
+                                    const SizedBox(height: 8),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 0,
+                                        ),
+                                        minimumSize: const Size(80, 28),
+                                        textStyle: const TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      child: const Text('Connect'),
                                     ),
-                                    child: const Text('Connect'),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              // Show collaborator profile or details
+                            },
                           ),
-                          onTap: () {
-                            // Show collaborator profile or details
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),
@@ -296,9 +323,10 @@ class _CollabsScreenState extends State<CollabsScreen> {
         backgroundColor: Colors.white,
         selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
         labelStyle: TextStyle(
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : Colors.grey[800],
+          color:
+              isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.grey[800],
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
