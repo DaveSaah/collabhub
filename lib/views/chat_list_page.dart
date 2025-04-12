@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'chat_page.dart';
 
 class ChatListPage extends StatelessWidget {
   const ChatListPage({super.key});
@@ -18,7 +19,7 @@ class ChatListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat List'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color.fromARGB(255, 131, 82, 214),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -48,7 +49,9 @@ class ChatListPage extends StatelessWidget {
                         backgroundColor: Colors.deepPurple[100],
                         child: Text(
                           chat['name']![0], // First letter of the name
-                          style: const TextStyle(color: Colors.deepPurple),
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 131, 82, 214),
+                          ),
                         ),
                       ),
                       title: Text(
@@ -57,7 +60,14 @@ class ChatListPage extends StatelessWidget {
                       ),
                       subtitle: Text(chat['message']!),
                       onTap: () {
-                        // Navigate to chat details (to be implemented)
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    ChatPage(chatPartnerName: 'Rahman'),
+                          ),
+                        );
                       },
                     ),
                   );
