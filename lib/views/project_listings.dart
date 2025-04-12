@@ -68,6 +68,289 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
     });
   }
 
+  void _showAddProjectModal() {
+    // Controllers for the form fields
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+    final List<String> collaborators = ['Me']; // Start with the current user
+    final TextEditingController collaboratorController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => DraggableScrollableSheet(
+          initialChildSize: 0.85,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (_, controller) => Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                // Handle for dragging
+                Center(
+                  child: Container(
+                    width: 60,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    margin: const EdgeInsets.only(bottom: 20),
+                  ),
+                ),
+                
+                // Header with title and close button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Create New Project',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                
+                // Form fields in a scrollable container
+                Expanded(
+                  child: ListView(
+                    controller: controller,
+                    children: [
+                      // Project Title
+                      Text(
+                        'Project Title',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: titleController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter project title',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      
+                      // Project Description
+                      Text(
+                        'Description',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: descriptionController,
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                          hintText: 'Enter project description',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      
+                      // Collaborators section
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Collaborators',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton.icon(
+                            onPressed: () {
+                              if (collaboratorController.text.isNotEmpty) {
+                                setState(() {
+                                  collaborators.add(collaboratorController.text);
+                                  collaboratorController.clear();
+                                });
+                              }
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('Add'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      
+                      // Add collaborator field
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: collaboratorController,
+                              decoration: InputDecoration(
+                                hintText: 'Add collaborator name',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          IconButton(
+                            onPressed: () {
+                              if (collaboratorController.text.isNotEmpty) {
+                                setState(() {
+                                  collaborators.add(collaboratorController.text);
+                                  collaboratorController.clear();
+                                });
+                              }
+                            },
+                            icon: const Icon(Icons.add_circle),
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Display added collaborators as chips
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: collaborators.map((collaborator) {
+                          return Chip(
+                            label: Text(collaborator),
+                            backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                            labelStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            deleteIcon: const Icon(Icons.close, size: 18),
+                            onDeleted: collaborator == 'Me' ? null : () {
+                              setState(() {
+                                collaborators.remove(collaborator);
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+                  ),
+                ),
+                
+                // Create Project button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      if (titleController.text.isNotEmpty && descriptionController.text.isNotEmpty) {
+                        // Add the new project to the list
+                        setState(() {
+                          Map<String, dynamic> newProject = {
+                            'title': titleController.text,
+                            'description': descriptionController.text,
+                            'collaborators': List<String>.from(collaborators),
+                          };
+                          
+                          // Close the modal first
+                          Navigator.pop(context);
+                          
+                          // Then update the parent state
+                          this.setState(() {
+                            projects.add(newProject);
+                            filteredProjects = List.from(projects);
+                          });
+                          
+                          // Show confirmation
+                          ScaffoldMessenger.of(this.context).showSnackBar(
+                            SnackBar(
+                              content: Text('Project "${titleController.text}" created!'),
+                              backgroundColor: Theme.of(this.context).colorScheme.primary,
+                            ),
+                          );
+                        });
+                      } else {
+                        // Show error if fields are empty
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in all required fields'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.check_circle_outline),
+                    label: const Text('Create Project', style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showProjectDetails(Map<String, dynamic> project) {
     showModalBottomSheet(
       context: context,
@@ -432,7 +715,7 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                                               content: Text(
                                                 'Joined ${project['title']}!',
                                               ),
-                                            ), // abeiku do your magic here ;)
+                                            ),
                                           );
                                         },
                                         icon: const Icon(
@@ -462,9 +745,7 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // abeiku do your magic here
-        },
+        onPressed: _showAddProjectModal,
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
