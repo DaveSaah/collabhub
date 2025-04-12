@@ -1,3 +1,4 @@
+import 'package:collabhub/components/popup_dialog.dart';
 import 'package:collabhub/services/auth.dart' show AuthService;
 import 'package:collabhub/views/project_listings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,96 +45,6 @@ class _SignupScreenState extends State<SignupScreen> {
         hasNumber.hasMatch(password);
   }
 
-  // Show custom popup dialog
-  void _showCustomDialog({
-    required String title,
-    required String message,
-    required IconData icon,
-    required Color color,
-    VoidCallback? onDismiss,
-  }) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(25),
-                  offset: const Offset(0, 4),
-                  blurRadius: 10,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: color.withAlpha(25),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: color, size: 36),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  message,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    if (onDismiss != null) {
-                      onDismiss();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: color,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 24,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'OK',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> registerUser() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
@@ -146,58 +57,84 @@ class _SignupScreenState extends State<SignupScreen> {
         email.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
-      _showCustomDialog(
-        title: 'Missing Information',
-        message: 'Please fill in all fields',
-        icon: Icons.error_outline,
-        color: Colors.orange,
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => PopupDialog(
+              title: 'Missing Information',
+              message: 'Please fill in all fields',
+              icon: Icons.error_outline,
+              color: Colors.orange,
+            ),
       );
       return;
     }
 
     // Validate email format
     if (!_isValidAshesiEmail(email)) {
-      _showCustomDialog(
-        title: 'Invalid Email',
-        message: 'Please enter a valid Ashesi email address (@ashesi.edu.gh)',
-        icon: Icons.email_outlined,
-        color: Colors.red,
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => PopupDialog(
+              title: 'Invalid Email',
+              message:
+                  'Please enter a valid Ashesi email address (@ashesi.edu.gh)',
+              icon: Icons.email_outlined,
+              color: Colors.red,
+            ),
       );
       return;
     }
 
     // Validate password requirements
     if (!_isValidPassword(password)) {
-      _showCustomDialog(
-        title: 'Invalid Password',
-        message:
-            'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character',
-        icon: Icons.lock_outlined,
-        color: Colors.red,
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => PopupDialog(
+              title: 'Invalid Password',
+              message:
+                  'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character',
+              icon: Icons.lock_outlined,
+              color: Colors.red,
+            ),
       );
       return;
     }
 
     // Check if passwords match
     if (password != confirmPassword) {
-      _showCustomDialog(
-        title: 'Password Mismatch',
-        message:
-            'Passwords do not match. Please ensure both passwords are identical.',
-        icon: Icons.lock_outlined,
-        color: Colors.red,
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => PopupDialog(
+              title: 'Password Mismatch',
+              message:
+                  'Passwords do not match. Please ensure both passwords are identical.',
+              icon: Icons.lock_outlined,
+              color: Colors.red,
+            ),
       );
       return;
     }
 
     // Check if terms are accepted
     if (!_acceptedTerms) {
-      _showCustomDialog(
-        title: 'Terms Not Accepted',
-        message:
-            'Please accept the Terms of Service and Privacy Policy to continue',
-        icon: Icons.gavel_outlined,
-        color: Colors.orange,
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => PopupDialog(
+              title: 'Terms Not Accepted',
+              message:
+                  'Please accept the Terms of Service and Privacy Policy to continue',
+              icon: Icons.gavel_outlined,
+              color: Colors.orange,
+            ),
       );
       return;
     }
@@ -226,21 +163,27 @@ class _SignupScreenState extends State<SignupScreen> {
             _isLoading = false;
           });
 
-          _showCustomDialog(
-            title: 'Success',
-            message: 'Account created successfully! Welcome to CollabHub.',
-            icon: Icons.check_circle_outline,
-            color: Colors.green,
-            onDismiss: () {
-              if (mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProjectListingsScreen(),
-                  ),
-                );
-              }
-            },
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder:
+                (context) => PopupDialog(
+                  title: 'Success',
+                  message:
+                      'Account created successfully! Welcome to CollabHub.',
+                  icon: Icons.check_circle_outline,
+                  color: Colors.green,
+                  onDismiss: () {
+                    if (mounted) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProjectListingsScreen(),
+                        ),
+                      );
+                    }
+                  },
+                ),
           );
         }
       } catch (e) {
@@ -249,12 +192,17 @@ class _SignupScreenState extends State<SignupScreen> {
             _isLoading = false;
           });
 
-          _showCustomDialog(
-            title: 'Account Created',
-            message:
-                'Your account was created, but we couldn\'t save your profile data: ${e.toString()}',
-            icon: Icons.warning_amber_outlined,
-            color: Colors.orange,
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder:
+                (context) => PopupDialog(
+                  title: 'Account Created',
+                  message:
+                      'Your account was created, but we couldn\'t save your profile data: ${e.toString()}',
+                  icon: Icons.warning_amber_outlined,
+                  color: Colors.orange,
+                ),
           );
         }
       }
@@ -278,11 +226,16 @@ class _SignupScreenState extends State<SignupScreen> {
           errorIcon = Icons.email_outlined;
         }
 
-        _showCustomDialog(
-          title: 'Registration Failed',
-          message: errorMessage,
-          icon: errorIcon,
-          color: Colors.red,
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder:
+              (context) => PopupDialog(
+                title: 'Registration Failed',
+                message: errorMessage,
+                icon: errorIcon,
+                color: Colors.red,
+              ),
         );
       }
     }

@@ -1,3 +1,4 @@
+import 'package:collabhub/components/popup_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:collabhub/views/auth/signup_page.dart';
 import 'package:collabhub/services/auth.dart';
@@ -21,111 +22,39 @@ class _LoginScreenState extends State<LoginScreen> {
     return email.isNotEmpty && email.toLowerCase().endsWith('@ashesi.edu.gh');
   }
 
-  // Show custom popup dialog
-  void _showCustomDialog({
-    required String title,
-    required String message,
-    required IconData icon,
-    required Color color,
-  }) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(25),
-                  offset: const Offset(0, 4),
-                  blurRadius: 10,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: color.withAlpha(25),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: color, size: 36),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  message,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: color,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 24,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'OK',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   void _loginUser() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
     // Validate fields
     if (email.isEmpty || password.isEmpty) {
-      _showCustomDialog(
-        title: 'Missing Information',
-        message: 'Please enter both email and password',
-        icon: Icons.error_outline,
-        color: Colors.orange,
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => PopupDialog(
+              title: 'Missing Information',
+              message: 'Please enter both email and password',
+              icon: Icons.error_outline,
+              color: Colors.orange,
+            ),
       );
       return;
     }
 
     // Validate email format
     if (!_isValidAshesiEmail(email)) {
-      _showCustomDialog(
-        title: 'Invalid Email',
-        message: 'Please enter a valid Ashesi email address (@ashesi.edu.gh)',
-        icon: Icons.email_outlined,
-        color: Colors.red,
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => PopupDialog(
+              title: 'Invalid Email',
+              message:
+                  'Please enter a valid Ashesi email address (@ashesi.edu.gh)',
+              icon: Icons.email_outlined,
+              color: Colors.red,
+            ),
       );
       return;
     }
@@ -133,30 +62,18 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await _authService.signInWithEmailAndPassword(email, password);
       if (mounted) {
-        _showCustomDialog(
-          title: 'Success',
-          message: 'Login successful. Welcome back!',
-          icon: Icons.check_circle_outline,
-          color: Colors.green,
-        );
-
-        // Add a slight delay before navigation for better UX
-        Future.delayed(const Duration(milliseconds: 1500), () async {
-          if (mounted) {
-            Navigator.of(context).pop(); // Dismiss dialog
-          }
-          await Future.delayed(
-            const Duration(milliseconds: 300),
-          ); // Wait for dialog to close
-          if (mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ProjectListingsScreen(),
+        showDialog(
+          context: context,
+          builder:
+              (context) => PopupDialog(
+                title: 'Success',
+                message: 'Login successful. Welcome back!',
+                icon: Icons.check_circle_outline,
+                color: Colors.green,
+                  );
+                },
               ),
-            );
-          }
-        });
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -173,11 +90,15 @@ class _LoginScreenState extends State<LoginScreen> {
           errorIcon = Icons.access_time;
         }
 
-        _showCustomDialog(
-          title: 'Login Failed',
-          message: errorMessage,
-          icon: errorIcon,
-          color: Colors.red,
+        showDialog(
+          context: context,
+          builder:
+              (context) => PopupDialog(
+                title: 'Login Failed',
+                message: errorMessage,
+                icon: errorIcon,
+                color: Colors.red,
+              ),
         );
       }
     }
