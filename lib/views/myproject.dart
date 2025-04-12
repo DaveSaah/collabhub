@@ -22,7 +22,7 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
       'dueDate': '2025-06-30',
       'members': 6,
     },
-    {
+    { 
       'title': 'Campus Navigation Tool',
       'role': 'UI Designer',
       'dueDate': '2025-04-20',
@@ -201,33 +201,11 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                           ),
                           child: Row(
                             children: [
-                              // Expanded(
-                              //   child: TextButton.icon(
-                              //     onPressed: () {},
-                              //     icon: const Icon(Icons.task_alt),
-                              //     label: const Text('Tasks'),
-                              //     style: TextButton.styleFrom(
-                              //       padding:
-                              //           const EdgeInsets.symmetric(vertical: 16),
-                              //     ),
-                              //   ),
-                              // ),
                               Container(
                                 height: 24,
                                 width: 1,
                                 color: Colors.grey[300],
                               ),
-                              // Expanded(
-                              //   child: TextButton.icon(
-                              //     onPressed: () {},
-                              //     icon: const Icon(Icons.chat_outlined),
-                              //     label: const Text('Chat'),
-                              //     style: TextButton.styleFrom(
-                              //       padding:
-                              //           const EdgeInsets.symmetric(vertical: 16),
-                              //     ),
-                              //   ),
-                              // ),
                               Container(
                                 height: 24,
                                 width: 1,
