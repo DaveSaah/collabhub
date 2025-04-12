@@ -169,19 +169,9 @@ class _LoginScreenState extends State<LoginScreen> {
           errorMessage =
               'Network error. Please check your internet connection and try again.';
           errorIcon = Icons.signal_wifi_off;
-        } else if (e.toString().contains('user-not-found')) {
-          errorMessage =
-              'No account found with this email. Please check your email or sign up.';
-          errorIcon = Icons.person_outline;
-        } else if (e.toString().contains('wrong-password')) {
-          errorMessage = 'Incorrect password. Please try again.';
-          errorIcon = Icons.lock_outline;
-        } else if (e.toString().contains('too-many-requests')) {
-          errorMessage =
-              'Too many failed login attempts. Please try again later.';
+        } else if (e.toString().contains('auth credential is incorrect')) {
+          errorMessage = 'Incorrect email or password';
           errorIcon = Icons.access_time;
-        } else {
-          errorMessage = 'Login failed: ${e.toString()}';
         }
 
         _showCustomDialog(
