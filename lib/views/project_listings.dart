@@ -5,10 +5,10 @@ class ProjectListingsScreen extends StatefulWidget {
   const ProjectListingsScreen({super.key});
 
   @override
-  _ProjectListingsScreenState createState() => _ProjectListingsScreenState();
+  ProjectListingsScreenState createState() => ProjectListingsScreenState();
 }
 
-class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
+class ProjectListingsScreenState extends State<ProjectListingsScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   // List to store projects added by users
@@ -134,8 +134,8 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
       // Floating action button to add a new project
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddProjectDialog(context),
-        child: const Icon(Icons.add),
         backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(Icons.add),
       ),
     );
   }

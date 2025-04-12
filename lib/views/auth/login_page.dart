@@ -70,6 +70,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 message: 'Login successful. Welcome back!',
                 icon: Icons.check_circle_outline,
                 color: Colors.green,
+                onDismiss: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProjectListingsScreen(),
+                    ),
                   );
                 },
               ),
