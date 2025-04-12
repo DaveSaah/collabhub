@@ -21,9 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Validation functions
   bool _isValidAshesiEmail(String email) {
-    return email.isNotEmpty &&
-        email.contains('@') &&
-        email.toLowerCase().endsWith('@ashesi.edu.gh');
+    return email.isNotEmpty && email.toLowerCase().endsWith('@ashesi.edu.gh');
   }
 
   // Show custom popup dialog
