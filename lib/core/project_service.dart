@@ -15,6 +15,7 @@ class ProjectService {
     required String title,
     required String summary,
     required String description,
+    required String skills,
     String? link,
   }) async {
     final currentUser = _auth.currentUser;
@@ -29,6 +30,7 @@ class ProjectService {
       'link': link,
       'userId': currentUser.uid,
       'createdAt': FieldValue.serverTimestamp(),
+      'skills': skills,
     };
 
     final docRef = await _projectsCollection.add(projectData);
@@ -62,6 +64,7 @@ class ProjectService {
     required String title,
     required String summary,
     required String description,
+    required String skills,
     String? link,
   }) {
     return _projectsCollection.doc(projectId).update({
@@ -70,6 +73,7 @@ class ProjectService {
       'description': description,
       'link': link,
       'updatedAt': FieldValue.serverTimestamp(),
+      'skills': skills,
     });
   }
 }

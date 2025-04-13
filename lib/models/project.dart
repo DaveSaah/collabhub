@@ -9,6 +9,7 @@ class Project {
   final String description;
   final String? link;
   final String userId;
+  final String skills;
   final DateTime createdAt;
 
   Project({
@@ -16,6 +17,7 @@ class Project {
     required this.title,
     required this.summary,
     required this.description,
+    required this.skills,
     this.link,
     required this.userId,
     required this.createdAt,
@@ -30,6 +32,7 @@ class Project {
       'link': link,
       'userId': userId,
       'createdAt': createdAt,
+      'skills': skills,
     };
   }
 
@@ -43,6 +46,7 @@ class Project {
       description: data['description'] ?? '',
       link: data['link'],
       userId: data['userId'] ?? '',
+      skills: data['skills'] ?? '',
       createdAt: (data['createdAt'] as Timestamp).toDate(),
     );
   }

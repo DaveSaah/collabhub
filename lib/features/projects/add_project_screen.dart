@@ -64,9 +64,9 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                 Text(
                   'Project Created!',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade700,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green.shade700,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -143,8 +143,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
           summary: _summaryController.text,
           description: _descriptionController.text,
           link: _linkController.text,
-          // Add this when backend supports it:
-          // skills: _skillsController.text,
+          skills: _skillsController.text,
         );
 
         setState(() {
@@ -187,9 +186,9 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   Text(
                     'Project Details',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -289,23 +288,24 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      child: _isSubmitting
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
+                      child:
+                          _isSubmitting
+                              ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Text(
+                                'Create Project',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
-                            )
-                          : const Text(
-                              'Create Project',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
                     ),
                   ),
                 ],
@@ -356,7 +356,10 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
             width: 2,
           ),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
