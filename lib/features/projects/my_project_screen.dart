@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:collabhub/features/collaborations/collab_screen.dart';
 import 'package:collabhub/features/chat/chat_screen.dart';
 import 'package:collabhub/features/projects/project_listings_screen.dart';
+import 'package:collabhub/features/projects/project_listings_screen.dart';
+import 'package:collabhub/features/projects/add_project_screen.dart';
+
 
 class MyProjectScreen extends StatefulWidget {
   const MyProjectScreen({super.key});
@@ -273,7 +276,13 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                 },
               ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+           Navigator.push(
+    context,
+  
+    MaterialPageRoute(builder: (context) => const AddProjectScreen()),
+  );
+        },
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
