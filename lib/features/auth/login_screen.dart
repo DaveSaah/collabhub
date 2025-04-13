@@ -1,8 +1,8 @@
-import 'package:collabhub/components/popup_dialog.dart';
+import 'package:collabhub/widgets/popup_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:collabhub/views/auth/signup_page.dart';
-import 'package:collabhub/services/auth.dart';
-import 'package:collabhub/views/project_listings.dart';
+import 'package:collabhub/features/auth/signup_screen.dart';
+import 'package:collabhub/core/auth_service.dart';
+import 'package:collabhub/features/projects/project_listings_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

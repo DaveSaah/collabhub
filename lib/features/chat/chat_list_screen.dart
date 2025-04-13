@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'chat_page.dart';
+import 'package:collabhub/features/chat/chat_page_screen.dart';
 
 class ChatListPage extends StatelessWidget {
   const ChatListPage({super.key});

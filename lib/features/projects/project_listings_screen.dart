@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:collabhub/views/myproject.dart';
-import 'package:collabhub/views/collabs.dart';
-import 'package:collabhub/views/chat.dart';
+import 'package:collabhub/features/projects/my_project_screen.dart';
+import 'package:collabhub/features/collaborations/collab_screen.dart';
+import 'package:collabhub/features/chat/chat_screen.dart';
 
 class ProjectListingsScreen extends StatefulWidget {
   const ProjectListingsScreen({super.key});

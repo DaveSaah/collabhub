@@ -1,6 +1,6 @@
-import 'package:collabhub/components/popup_dialog.dart';
-import 'package:collabhub/services/auth.dart' show AuthService;
-import 'package:collabhub/views/project_listings.dart';
+import 'package:collabhub/widgets/popup_dialog.dart';
+import 'package:collabhub/core/auth_service.dart' show AuthService;
+import 'package:collabhub/features/projects/project_listings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

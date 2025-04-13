@@ -1,4 +1,4 @@
-import 'package:collabhub/components/info_card.dart';
+import 'package:collabhub/widgets/info_card.dart';
 import 'package:flutter/material.dart';
 
 class ProfileView extends StatelessWidget {
