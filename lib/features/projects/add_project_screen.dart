@@ -26,18 +26,106 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
     super.dispose();
   }
 
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.check_circle,
+                    color: Colors.green.shade600,
+                    size: 64,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Project Created!',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade700,
+                      ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Your project "${_titleController.text}" has been successfully created.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close the dialog
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyProjectScreen(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: const Text(
+                      'Go to My Projects',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isSubmitting = true;
       });
 
+      // Simulate form submission with a delay
       Future.delayed(const Duration(seconds: 1), () {
-        //abeiku do here
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MyProjectScreen()),
-        );
+        setState(() {
+          _isSubmitting = false;
+        });
+        
+        // Show success dialog instead of immediately navigating
+        _showSuccessDialog();
       });
     }
   }
@@ -217,7 +305,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
 
                   // Link Field
                   Text(
-                    'Project Link',
+                    'Project Link (Optional)',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
