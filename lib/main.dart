@@ -1,6 +1,6 @@
 import 'package:collabhub/firebase_options.dart' show DefaultFirebaseOptions;
-import 'package:collabhub/views/auth/login_page.dart';
-import 'package:collabhub/views/project_listings.dart';
+import 'package:collabhub/features/auth/login_screen.dart';
+import 'package:collabhub/features/projects/project_listings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
