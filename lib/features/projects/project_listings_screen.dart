@@ -1,3 +1,4 @@
+import 'package:collabhub/widgets/bottom_nav.dart' show BottomNav;
 import 'package:flutter/material.dart';
 import 'package:collabhub/features/projects/my_project_screen.dart';
 import 'package:collabhub/features/collaborations/collab_screen.dart';
@@ -196,59 +197,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
     );
   }
 
-  void _onItemTapped(int index) {
-    if (_selectedIndex == index) {
-      // User tapped the current tab, do nothing
-      return;
-    }
-
-    // Navigate to the appropriate screen based on the selected index
-    switch (index) {
-      case 0:
-        // Already on Home/ProjectListings screen
-        setState(() {
-          _selectedIndex = index;
-        });
-        break;
-      case 1:
-        // Navigate to My Projects screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MyProjectScreen()),
-        ).then((_) {
-          // When returning to this screen, ensure the index is reset to 0
-          setState(() {
-            _selectedIndex = 0;
-          });
-        });
-        break;
-      case 2:
-        // Navigate to Collabs screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const CollabsScreen()),
-        ).then((_) {
-          // When returning to this screen, ensure the index is reset to 0
-          setState(() {
-            _selectedIndex = 0;
-          });
-        });
-        break;
-      case 3:
-        // Navigate to Chat screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ChatScreen()),
-        ).then((_) {
-          // When returning to this screen, ensure the index is reset to 0
-          setState(() {
-            _selectedIndex = 0;
-          });
-        });
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -265,7 +213,9 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
               // Navigate to Account Settings Page
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AccountSettingsPage()),
+                MaterialPageRoute(
+                  builder: (context) => const AccountSettingsPage(),
+                ),
               );
             },
             tooltip: 'Account Settings',
@@ -472,58 +422,11 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              spreadRadius: 0,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          child: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_outlined),
-                activeIcon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.folder_outlined),
-                activeIcon: Icon(Icons.folder),
-                label: 'My Projects',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.people_outline),
-                activeIcon: Icon(Icons.people),
-                label: 'Collabs',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.chat_bubble_outline),
-                activeIcon: Icon(Icons.chat_bubble),
-                label: 'Chat',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: Theme.of(context).colorScheme.primary,
-            unselectedItemColor: Colors.grey,
-            showUnselectedLabels: true,
-            elevation: 0,
-            backgroundColor: Colors.white,
-            onTap: _onItemTapped,
-            selectedFontSize: 12,
-            unselectedFontSize: 12,
-          ),
-        ),
+      bottomNavigationBar: BottomNav(
+        currentIndex: _selectedIndex,
+        parentContext: context,
       ),
     );
   }
 }
+

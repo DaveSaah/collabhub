@@ -1,9 +1,9 @@
+import 'package:collabhub/widgets/bottom_nav.dart' show BottomNav;
 import 'package:flutter/material.dart';
 import 'package:collabhub/features/collaborations/collab_screen.dart';
 import 'package:collabhub/features/chat/chat_screen.dart';
 import 'package:collabhub/features/projects/project_listings_screen.dart';
 import 'package:collabhub/features/projects/add_project_screen.dart';
-
 
 class MyProjectScreen extends StatefulWidget {
   const MyProjectScreen({super.key});
@@ -14,7 +14,7 @@ class MyProjectScreen extends StatefulWidget {
 
 class _MyProjectScreenState extends State<MyProjectScreen> {
   // Add tracking for selected index - default to 1 for "My Projects" tab
-  int _selectedIndex = 1;
+  final int _selectedIndex = 1;
 
   // Sample projects data
   final List<Map<String, dynamic>> myProjects = [
@@ -37,47 +37,6 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
       'members': 3,
     },
   ];
-
-  // Add navigation logic method
-  void _onItemTapped(int index) {
-    if (_selectedIndex == index) {
-      // User tapped the current tab, do nothing
-      return;
-    }
-
-    // Navigate to the appropriate screen based on the selected index
-    switch (index) {
-      case 0:
-        // Navigate to Home/ProjectListings screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProjectListingsScreen(),
-          ),
-        );
-        break;
-      case 1:
-        // Already on My Projects screen
-        setState(() {
-          _selectedIndex = index;
-        });
-        break;
-      case 2:
-        // Navigate to Collabs screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const CollabsScreen()),
-        );
-        break;
-      case 3:
-        // Navigate to Chat screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ChatScreen()),
-        );
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -276,68 +235,19 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
               ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-           Navigator.push(
-    context,
-  
-    MaterialPageRoute(builder: (context) => const AddProjectScreen()),
-  );
+          Navigator.push(
+            context,
+
+            MaterialPageRoute(builder: (context) => const AddProjectScreen()),
+          );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      // Add the bottom navigation bar
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              spreadRadius: 0,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          child: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_outlined),
-                activeIcon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.folder_outlined),
-                activeIcon: Icon(Icons.folder),
-                label: 'My Projects',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.people_outline),
-                activeIcon: Icon(Icons.people),
-                label: 'Collabs',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.chat_bubble_outline),
-                activeIcon: Icon(Icons.chat_bubble),
-                label: 'Chat',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: Theme.of(context).colorScheme.primary,
-            unselectedItemColor: Colors.grey,
-            showUnselectedLabels: true,
-            elevation: 0,
-            backgroundColor: Colors.white,
-            onTap: _onItemTapped,
-            selectedFontSize: 12,
-            unselectedFontSize: 12,
-          ),
-        ),
-      ),
+      bottomNavigationBar: BottomNav(
+        currentIndex: _selectedIndex,
+        parentContext: context,
+      ), // Add the bottom navigation bar
     );
   }
 }

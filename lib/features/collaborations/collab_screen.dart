@@ -1,7 +1,5 @@
+import 'package:collabhub/widgets/bottom_nav.dart' show BottomNav;
 import 'package:flutter/material.dart';
-import 'package:collabhub/features/projects/project_listings_screen.dart';
-import 'package:collabhub/features/projects/my_project_screen.dart';
-import 'package:collabhub/features/chat/chat_screen.dart';
 
 class CollabsScreen extends StatefulWidget {
   const CollabsScreen({super.key});
@@ -12,7 +10,7 @@ class CollabsScreen extends StatefulWidget {
 
 class _CollabsScreenState extends State<CollabsScreen> {
   // Add tracking for selected index - default to 2 for "Collabs" tab
-  int _selectedIndex = 2;
+  final int _selectedIndex = 2;
 
   // Sample collaborators data
   final List<Map<String, dynamic>> collaborators = [
@@ -81,47 +79,6 @@ class _CollabsScreenState extends State<CollabsScreen> {
               )
               .toList();
     });
-  }
-
-  // Add navigation logic method
-  void _onItemTapped(int index) {
-    if (_selectedIndex == index) {
-      // User tapped the current tab, do nothing
-      return;
-    }
-
-    // Navigate to the appropriate screen based on the selected index
-    switch (index) {
-      case 0:
-        // Navigate to Home/ProjectListings screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProjectListingsScreen(),
-          ),
-        );
-        break;
-      case 1:
-        // Navigate to My Projects screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MyProjectScreen()),
-        );
-        break;
-      case 2:
-        // Already on Collabs screen
-        setState(() {
-          _selectedIndex = index;
-        });
-        break;
-      case 3:
-        // Navigate to Chat screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ChatScreen()),
-        );
-        break;
-    }
   }
 
   @override
@@ -355,57 +312,9 @@ class _CollabsScreenState extends State<CollabsScreen> {
         ],
       ),
       // Add the bottom navigation bar
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              spreadRadius: 0,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          child: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_outlined),
-                activeIcon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.folder_outlined),
-                activeIcon: Icon(Icons.folder),
-                label: 'My Projects',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.people_outline),
-                activeIcon: Icon(Icons.people),
-                label: 'Collabs',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.chat_bubble_outline),
-                activeIcon: Icon(Icons.chat_bubble),
-                label: 'Chat',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: Theme.of(context).colorScheme.primary,
-            unselectedItemColor: Colors.grey,
-            showUnselectedLabels: true,
-            elevation: 0,
-            backgroundColor: Colors.white,
-            onTap: _onItemTapped,
-            selectedFontSize: 12,
-            unselectedFontSize: 12,
-          ),
-        ),
+      bottomNavigationBar: BottomNav(
+        currentIndex: _selectedIndex,
+        parentContext: context,
       ),
     );
   }
