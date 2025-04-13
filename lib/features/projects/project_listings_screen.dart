@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:collabhub/features/projects/my_project_screen.dart';
 import 'package:collabhub/features/collaborations/collab_screen.dart';
 import 'package:collabhub/features/chat/chat_screen.dart';
+import 'package:collabhub/features/settings/settings_screen.dart'; // Import the AccountSettingsPage
 
 class ProjectListingsScreen extends StatefulWidget {
   const ProjectListingsScreen({super.key});
@@ -256,7 +257,20 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
         title: const Text('Discover Projects'),
         elevation: 0,
         centerTitle: true,
-        actions: [],
+        actions: [
+          // Added Account Settings Icon Button
+          IconButton(
+            icon: const Icon(Icons.account_circle_outlined),
+            onPressed: () {
+              // Navigate to Account Settings Page
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AccountSettingsPage()),
+              );
+            },
+            tooltip: 'Account Settings',
+          ),
+        ],
         automaticallyImplyLeading: false,
       ),
       body: Column(
@@ -269,10 +283,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
               decoration: InputDecoration(
                 hintText: 'Search projects...',
                 prefixIcon: const Icon(Icons.search),
-                // suffixIcon: IconButton(
-                //   icon: const Icon(Icons.tune),
-                //   onPressed: () {},
-                // ),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
@@ -433,7 +443,7 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                                               content: Text(
                                                 'Joined ${project['title']}!',
                                               ),
-                                            ), // abeiku do your magic here ;)
+                                            ),
                                           );
                                         },
                                         icon: const Icon(
@@ -462,13 +472,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // abeiku do your magic here
-      //   },
-      //   backgroundColor: Theme.of(context).colorScheme.primary,
-      //   child: const Icon(Icons.add, color: Colors.white),
-      // ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
