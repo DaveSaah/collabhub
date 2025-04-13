@@ -1,3 +1,4 @@
+import 'package:collabhub/core/project_service.dart' show ProjectService;
 import 'package:flutter/material.dart';
 import 'package:collabhub/features/projects/my_project_screen.dart';
 
@@ -16,6 +17,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
   final _linkController = TextEditingController();
 
   bool _isSubmitting = false;
+  final _projectService = ProjectService();
 
   @override
   void dispose() {
@@ -60,18 +62,15 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                 Text(
                   'Project Created!',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade700,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green.shade700,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'Your project "${_titleController.text}" has been successfully created.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey[800],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[800], fontSize: 14),
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -112,21 +111,53 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
     );
   }
 
-  void _submitForm() {
+  void _showErrorDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(errorMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isSubmitting = true;
       });
 
-      // Simulate form submission with a delay
-      Future.delayed(const Duration(seconds: 1), () {
+      try {
+        // Store project in Firestore
+        await _projectService.createProject(
+          title: _titleController.text,
+          summary: _summaryController.text,
+          description: _descriptionController.text,
+          link: _linkController.text.isEmpty ? null : _linkController.text,
+        );
+
         setState(() {
           _isSubmitting = false;
         });
-        
-        // Show success dialog instead of immediately navigating
+
+        // Show success dialog
         _showSuccessDialog();
-      });
+      } catch (error) {
+        setState(() {
+          _isSubmitting = false;
+        });
+
+        // Show error dialog
+        _showErrorDialog('Failed to create project: ${error.toString()}');
+      }
     }
   }
 
@@ -156,17 +187,14 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   Text(
                     'Project Details',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Fill in the information below to create your new project',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                   const SizedBox(height: 32),
 
@@ -359,23 +387,24 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      child: _isSubmitting
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
+                      child:
+                          _isSubmitting
+                              ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Text(
+                                'Create Project',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
-                            )
-                          : const Text(
-                              'Create Project',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
                     ),
                   ),
                 ],
