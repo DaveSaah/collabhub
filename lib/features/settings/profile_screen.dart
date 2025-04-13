@@ -9,8 +9,8 @@ class ProfileView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Profile'),
+        automaticallyImplyLeading: true,
         actions: [IconButton(icon: const Icon(Icons.edit), onPressed: () {})],
-        automaticallyImplyLeading: false, // This removes the back button
       ),
       // wrap column with padding
       body: Padding(

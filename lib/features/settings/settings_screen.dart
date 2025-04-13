@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:collabhub/features/settings/profile_screen.dart';
+
 
 class AccountSettingsPage extends StatelessWidget {
   const AccountSettingsPage({super.key});
@@ -117,10 +119,25 @@ class AccountSettingsPage extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    // Updated Profile item to use ProfileScreen
+                    _buildSettingsItem(
+                      context,
+                      icon: Icons.person_outline,
+                      iconColor: Colors.deepPurple,
+                      title: 'Profile',
+                      subtitle: 'View and edit your profile information',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ProfileView()),
+                        );
+                      },
+                    ),
+                    const Divider(height: 1),
                     _buildSettingsItem(
                       context,
                       icon: Icons.lock_outline,
-                      iconColor: Colors.deepPurple,
+                      iconColor: Colors.blue,
                       title: 'Change Password',
                       subtitle: 'Update your account password',
                       onTap: () => _showChangePasswordDialog(context),
@@ -138,7 +155,7 @@ class AccountSettingsPage extends StatelessWidget {
                     _buildSettingsItem(
                       context,
                       icon: Icons.privacy_tip_outlined,
-                      iconColor: Colors.blue,
+                      iconColor: Colors.green,
                       title: 'Privacy',
                       subtitle: 'Control your privacy settings',
                       onTap: () {},

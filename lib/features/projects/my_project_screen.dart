@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:collabhub/features/collaborations/collab_screen.dart';
 import 'package:collabhub/features/chat/chat_screen.dart';
 import 'package:collabhub/features/projects/project_listings_screen.dart';
-import 'package:collabhub/features/projects/project_listings_screen.dart';
 import 'package:collabhub/features/projects/add_project_screen.dart';
 
 
