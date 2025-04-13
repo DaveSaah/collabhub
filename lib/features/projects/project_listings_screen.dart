@@ -462,13 +462,13 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // abeiku do your magic here
-        },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     // abeiku do your magic here
+      //   },
+      //   backgroundColor: Theme.of(context).colorScheme.primary,
+      //   child: const Icon(Icons.add, color: Colors.white),
+      // ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
