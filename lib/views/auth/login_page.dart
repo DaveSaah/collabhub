@@ -104,44 +104,32 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       });
       
       if (mounted) {
-        // Show success animation and dialog
-        _animationController.reset();
-        _animationController.forward();
-        
+        // Show success dialog with simpler implementation
         showDialog(
           context: context,
-          builder: (context) => AnimatedBuilder(
-            animation: _fadeAnimation,
-            builder: (context, child) {
-              return FadeTransition(
-                opacity: _fadeAnimation,
-                child: ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: PopupDialog(
-                    title: 'Success',
-                    message: 'Login successful. Welcome back!',
-                    icon: Icons.check_circle_outline,
-                    color: Colors.green,
-                    onDismiss: () {
-                      Navigator.pushReplacement(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => const ProjectListingsScreen(),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            var begin = const Offset(1.0, 0.0);
-                            var end = Offset.zero;
-                            var curve = Curves.easeInOut;
-                            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                            return SlideTransition(
-                              position: animation.drive(tween),
-                              child: child,
-                            );
-                          },
-                          transitionDuration: const Duration(milliseconds: 500),
-                        ),
-                      );
-                    },
-                  ),
+          barrierDismissible: false,
+          builder: (dialogContext) => PopupDialog(
+            title: 'Success',
+            message: 'Login successful. Welcome back!',
+            icon: Icons.check_circle_outline,
+            color: Colors.green,
+            onDismiss: () {
+              // Navigate after dialog is dismissed
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => const ProjectListingsScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    var begin = const Offset(1.0, 0.0);
+                    var end = Offset.zero;
+                    var curve = Curves.easeInOut;
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                  transitionDuration: const Duration(milliseconds: 500),
                 ),
               );
             },
@@ -171,6 +159,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
         showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (context) => PopupDialog(
             title: 'Login Failed',
             message: errorMessage,
@@ -380,7 +369,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 ),
                 const SizedBox(height: 32),
 
-                // Sign In Button with animation - Fixed Matrix4 syntax
+                // Sign In Button with animation
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   transform: _isLoading 
