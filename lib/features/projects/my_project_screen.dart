@@ -263,24 +263,30 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                       ),
                     ),
                     Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(16),
-                          bottomRight: Radius.circular(16),
-                        ),
-                      ),
-                      child: TextButton.icon(
-                        onPressed: () {
-                          _showProjectDetails(context, project);
-                        },
-                        icon: const Icon(Icons.info_outline),
-                        label: const Text('View Details'),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
+                    decoration: BoxDecoration(
+                     color: Colors.grey[50],
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
                       ),
                     ),
+                    width: double.infinity,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        _showProjectDetails(context, project);
+                      },
+                      icon: const Icon(Icons.visibility_outlined),
+                      label: const Text('View Details'),
+                      style: TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      foregroundColor: Theme.of(context).colorScheme.primary,
+      textStyle: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+    ),
+  ),
+),
                   ],
                 ),
               );
