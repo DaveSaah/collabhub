@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:collabhub/views/project_listings.dart';
+import 'package:collabhub/views/myproject.dart';
+import 'package:collabhub/views/chat.dart';
 
 class CollabsScreen extends StatefulWidget {
   const CollabsScreen({super.key});
@@ -8,6 +11,9 @@ class CollabsScreen extends StatefulWidget {
 }
 
 class _CollabsScreenState extends State<CollabsScreen> {
+  // Add tracking for selected index - default to 2 for "Collabs" tab
+  int _selectedIndex = 2;
+
   // Sample collaborators data
   final List<Map<String, dynamic>> collaborators = [
     {
@@ -77,6 +83,47 @@ class _CollabsScreenState extends State<CollabsScreen> {
     });
   }
 
+  // Add navigation logic method
+  void _onItemTapped(int index) {
+    if (_selectedIndex == index) {
+      // User tapped the current tab, do nothing
+      return;
+    }
+
+    // Navigate to the appropriate screen based on the selected index
+    switch (index) {
+      case 0:
+        // Navigate to Home/ProjectListings screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProjectListingsScreen(),
+          ),
+        );
+        break;
+      case 1:
+        // Navigate to My Projects screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MyProjectScreen()),
+        );
+        break;
+      case 2:
+        // Already on Collabs screen
+        setState(() {
+          _selectedIndex = index;
+        });
+        break;
+      case 3:
+        // Navigate to Chat screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ChatScreen()),
+        );
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,10 +132,7 @@ class _CollabsScreenState extends State<CollabsScreen> {
         title: const Text('Collaborators'),
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
@@ -259,22 +303,25 @@ class _CollabsScreenState extends State<CollabsScreen> {
                                 ),
                               ],
                             ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      '${collaborator['projects']} projects',
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 12,
-                                      ),
+                            // Fix the overflow issue by adjusting the trailing widget
+                            trailing: SizedBox(
+                              width: 90, // Fixed width for the trailing section
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '${collaborator['projects']} projects',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 12,
                                     ),
-                                    const SizedBox(height: 8),
-                                    ElevatedButton(
+                                  ),
+                                  const SizedBox(height: 8),
+                                  SizedBox(
+                                    height: 28,
+                                    width: double.infinity,
+                                    child: ElevatedButton(
                                       onPressed: () {},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -283,19 +330,19 @@ class _CollabsScreenState extends State<CollabsScreen> {
                                             ).colorScheme.primary,
                                         foregroundColor: Colors.white,
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
+                                          horizontal: 8,
                                           vertical: 0,
                                         ),
-                                        minimumSize: const Size(80, 28),
+                                        minimumSize: const Size(80, 24),
                                         textStyle: const TextStyle(
                                           fontSize: 12,
                                         ),
                                       ),
                                       child: const Text('Connect'),
                                     ),
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
                             onTap: () {
                               // Show collaborator profile or details
@@ -306,6 +353,59 @@ class _CollabsScreenState extends State<CollabsScreen> {
                     ),
           ),
         ],
+      ),
+      // Add the bottom navigation bar
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 0,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          child: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.folder_outlined),
+                activeIcon: Icon(Icons.folder),
+                label: 'My Projects',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.people_outline),
+                activeIcon: Icon(Icons.people),
+                label: 'Collabs',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.chat_bubble_outline),
+                activeIcon: Icon(Icons.chat_bubble),
+                label: 'Chat',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Theme.of(context).colorScheme.primary,
+            unselectedItemColor: Colors.grey,
+            showUnselectedLabels: true,
+            elevation: 0,
+            backgroundColor: Colors.white,
+            onTap: _onItemTapped,
+            selectedFontSize: 12,
+            unselectedFontSize: 12,
+          ),
+        ),
       ),
     );
   }

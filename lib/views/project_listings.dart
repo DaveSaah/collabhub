@@ -541,6 +541,7 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
         elevation: 0,
         centerTitle: true,
         actions: [],
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
