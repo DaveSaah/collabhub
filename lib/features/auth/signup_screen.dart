@@ -22,7 +22,20 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _skillsController = TextEditingController();
   bool _acceptedTerms = false;
+
+  // Role selection
+  final List<String> _roleOptions = [
+    'Developer',
+    'Designer',
+    'Project Manager',
+    'Data Scientist',
+    'Other',
+  ];
+  String _selectedRole = 'Developer';
+  final TextEditingController _customRoleController = TextEditingController();
+  bool _showCustomRole = false;
 
   final AuthService _authService = AuthService();
 
@@ -50,13 +63,21 @@ class _SignupScreenState extends State<SignupScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
+    final skills = _skillsController.text.trim();
+    final role =
+        _selectedRole == 'Other'
+            ? _customRoleController.text.trim()
+            : _selectedRole;
     UserCredential? userCredential;
 
     // Check if all fields are filled
     if (name.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
-        confirmPassword.isEmpty) {
+        confirmPassword.isEmpty ||
+        skills.isEmpty ||
+        (_selectedRole == 'Other' &&
+            _customRoleController.text.trim().isEmpty)) {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -150,11 +171,13 @@ class _SignupScreenState extends State<SignupScreen> {
       );
 
       try {
-        // Save name to Firestore
+        // Save user data to Firestore
         final uid = userCredential.user?.uid;
         await _firestore.collection('users').doc(uid).set({
           'name': name,
           'email': email,
+          'skills': skills,
+          'role': role,
           'createdAt': Timestamp.now(),
         });
 
@@ -247,6 +270,8 @@ class _SignupScreenState extends State<SignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _skillsController.dispose();
+    _customRoleController.dispose();
     super.dispose();
   }
 
@@ -407,6 +432,114 @@ class _SignupScreenState extends State<SignupScreen> {
                       contentPadding: EdgeInsets.symmetric(vertical: 12),
                     ),
                     keyboardType: TextInputType.emailAddress,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Role Label
+                const Text(
+                  "Role",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.deepPurple,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // Role Dropdown
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedRole,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      prefixIcon: Icon(
+                        Icons.work_outline,
+                        color: Colors.deepPurple,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    items:
+                        _roleOptions.map((String role) {
+                          return DropdownMenuItem<String>(
+                            value: role,
+                            child: Text(role),
+                          );
+                        }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedRole = newValue!;
+                        _showCustomRole = newValue == 'Other';
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Custom Role Input (conditionally visible)
+                if (_showCustomRole) ...[
+                  const Text(
+                    "Specify Role",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: TextField(
+                      controller: _customRoleController,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter your specific role',
+                        border: InputBorder.none,
+                        prefixIcon: Icon(
+                          Icons.edit_outlined,
+                          color: Colors.deepPurple,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // Skills Label
+                const Text(
+                  "Skills",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.deepPurple,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // Skills Input
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: TextField(
+                    controller: _skillsController,
+                    decoration: const InputDecoration(
+                      hintText: 'e.g. Java, Python, UI/UX Design, Agile...',
+                      border: InputBorder.none,
+                      prefixIcon: Icon(
+                        Icons.build_outlined,
+                        color: Colors.deepPurple,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
