@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:collabhub/features/projects/project_listings_screen.dart';
 import 'package:collabhub/features/projects/my_project_screen.dart';
 import 'package:collabhub/features/collaborations/collab_screen.dart';
-import 'package:collabhub/features/chat/chat_screen.dart';
+import 'package:collabhub/features/chat/thought_board.dart';
 
 class BottomNav extends StatelessWidget {
   final int currentIndex;
@@ -49,7 +49,7 @@ class BottomNav extends StatelessWidget {
         // Navigate to Chat screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ChatScreen()),
+          MaterialPageRoute(builder: (context) => const ThoughtBoardScreen()),
         );
         break;
     }
@@ -91,9 +91,9 @@ class BottomNav extends StatelessWidget {
               label: 'Collabs',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline),
-              activeIcon: Icon(Icons.chat_bubble),
-              label: 'Chat',
+              icon: Icon(Icons.lightbulb),
+              activeIcon: Icon(Icons.lightbulb),
+              label: 'Thoughts',
             ),
           ],
           currentIndex: currentIndex,
