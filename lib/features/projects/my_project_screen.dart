@@ -157,7 +157,7 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                                 icon: const Icon(Icons.more_vert),
                                 onSelected: (value) {
                                   if (value == 'edit') {
-                                    // TODO: Navigate to edit screen
+                                    _navigateToEditScreen(context, project);
                                   } else if (value == 'delete') {
                                     _showDeleteConfirmation(context, project);
                                   }
@@ -263,30 +263,31 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                       ),
                     ),
                     Container(
-                    decoration: BoxDecoration(
-                     color: Colors.grey[50],
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                      width: double.infinity,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          _showProjectDetails(context, project);
+                        },
+                        icon: const Icon(Icons.visibility_outlined),
+                        label: const Text('View Details'),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          foregroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                     ),
-                    width: double.infinity,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        _showProjectDetails(context, project);
-                      },
-                      icon: const Icon(Icons.visibility_outlined),
-                      label: const Text('View Details'),
-                      style: TextButton.styleFrom(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      foregroundColor: Theme.of(context).colorScheme.primary,
-      textStyle: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
-    ),
-  ),
-),
                   ],
                 ),
               );
@@ -307,6 +308,16 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
       bottomNavigationBar: BottomNav(
         currentIndex: _selectedIndex,
         parentContext: context,
+      ),
+    );
+  }
+
+  // Navigate to edit screen with the project data
+  void _navigateToEditScreen(BuildContext context, Project project) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddProjectScreen(projectToEdit: project),
       ),
     );
   }
@@ -410,10 +421,26 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Text(
-                          project.title,
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                project.title,
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _navigateToEditScreen(context, project);
+                              },
+                              tooltip: 'Edit Project',
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         Container(
@@ -528,24 +555,52 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                             ),
                           ),
                         ],
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                // TODO: Navigate to edit screen
-                              },
-                              icon: const Icon(Icons.edit),
-                              label: const Text('Edit Project'),
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  _navigateToEditScreen(context, project);
+                                },
+                                icon: const Icon(Icons.edit),
+                                label: const Text('Edit Project'),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  side: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  _showDeleteConfirmation(context, project);
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                label: const Text('Delete'),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  foregroundColor: Colors.red,
+                                  side: const BorderSide(color: Colors.red),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
                               ),
                             ),

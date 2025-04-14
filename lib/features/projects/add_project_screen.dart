@@ -1,9 +1,12 @@
 import 'package:collabhub/core/project_service.dart' show ProjectService;
 import 'package:flutter/material.dart';
 import 'package:collabhub/features/projects/my_project_screen.dart';
+import 'package:collabhub/models/project.dart';
 
 class AddProjectScreen extends StatefulWidget {
-  const AddProjectScreen({super.key});
+  final Project? projectToEdit;
+
+  const AddProjectScreen({super.key, this.projectToEdit});
 
   @override
   State<AddProjectScreen> createState() => _AddProjectScreenState();
@@ -18,7 +21,24 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
   final _skillsController = TextEditingController();
 
   bool _isSubmitting = false;
+  bool _isEditMode = false;
+  String? _projectId;
   final _projectService = ProjectService();
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if we're in edit mode and populate fields
+    if (widget.projectToEdit != null) {
+      _isEditMode = true;
+      _projectId = widget.projectToEdit!.id;
+      _titleController.text = widget.projectToEdit!.title;
+      _summaryController.text = widget.projectToEdit!.summary;
+      _descriptionController.text = widget.projectToEdit!.description;
+      _linkController.text = widget.projectToEdit!.link ?? '';
+      _skillsController.text = widget.projectToEdit!.skills;
+    }
+  }
 
   @override
   void dispose() {
@@ -31,6 +51,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
   }
 
   void _showSuccessDialog() {
+    final actionText = _isEditMode ? "Updated" : "Created";
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -62,7 +83,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Project Created!',
+                  'Project $actionText!',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.green.shade700,
@@ -70,7 +91,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Your project "${_titleController.text}" has been successfully created.',
+                  'Your project "${_titleController.text}" has been successfully $actionText.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey[800], fontSize: 14),
                 ),
@@ -138,13 +159,26 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
       });
 
       try {
-        await _projectService.createProject(
-          title: _titleController.text,
-          summary: _summaryController.text,
-          description: _descriptionController.text,
-          link: _linkController.text,
-          skills: _skillsController.text,
-        );
+        if (_isEditMode) {
+          // Update existing project
+          await _projectService.updateProject(
+            projectId: _projectId!,
+            title: _titleController.text,
+            summary: _summaryController.text,
+            description: _descriptionController.text,
+            link: _linkController.text,
+            skills: _skillsController.text,
+          );
+        } else {
+          // Create new project
+          await _projectService.createProject(
+            title: _titleController.text,
+            summary: _summaryController.text,
+            description: _descriptionController.text,
+            link: _linkController.text,
+            skills: _skillsController.text,
+          );
+        }
 
         setState(() {
           _isSubmitting = false;
@@ -156,17 +190,20 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
           _isSubmitting = false;
         });
 
-        _showErrorDialog('Failed to create project: ${error.toString()}');
+        final action = _isEditMode ? "update" : "create";
+        _showErrorDialog('Failed to $action project: ${error.toString()}');
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final actionText = _isEditMode ? "Edit" : "Create New";
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Create New Project'),
+        title: Text('$actionText Project'),
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
@@ -192,7 +229,9 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Fill in the information below to create your new project',
+                    _isEditMode
+                        ? 'Update the information below to edit your project'
+                        : 'Fill in the information below to create your new project',
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                   const SizedBox(height: 32),
@@ -298,9 +337,11 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                                   strokeWidth: 2,
                                 ),
                               )
-                              : const Text(
-                                'Create Project',
-                                style: TextStyle(
+                              : Text(
+                                _isEditMode
+                                    ? 'Update Project'
+                                    : 'Create Project',
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.5,
