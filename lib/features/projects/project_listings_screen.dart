@@ -1,8 +1,5 @@
 import 'package:collabhub/widgets/bottom_nav.dart' show BottomNav;
 import 'package:flutter/material.dart';
-import 'package:collabhub/features/projects/my_project_screen.dart';
-import 'package:collabhub/features/collaborations/collab_screen.dart';
-import 'package:collabhub/features/chat/chat_screen.dart';
 import 'package:collabhub/features/settings/settings_screen.dart'; // Import the AccountSettingsPage
 
 class ProjectListingsScreen extends StatefulWidget {
@@ -14,7 +11,7 @@ class ProjectListingsScreen extends StatefulWidget {
 
 class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
   final TextEditingController _searchController = TextEditingController();
-  int _selectedIndex = 0; // Track the selected navigation item
+  final int _selectedIndex = 0; // Track the selected navigation item
 
   List<Map<String, dynamic>> projects = [
     {
@@ -208,7 +205,7 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
         actions: [
           // Added Account Settings Icon Button
           IconButton(
-            icon: const Icon(Icons.account_circle_outlined),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               // Navigate to Account Settings Page
               Navigator.push(
@@ -429,4 +426,3 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
     );
   }
 }
-

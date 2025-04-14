@@ -228,7 +228,6 @@ class _MyProjectScreenState extends State<MyProjectScreen> {
                             children:
                                 skillsList
                                     .where((skill) => skill.trim().isNotEmpty)
-                                    .take(3)
                                     .map(
                                       (skill) => Container(
                                         padding: const EdgeInsets.symmetric(
