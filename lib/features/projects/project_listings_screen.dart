@@ -1,8 +1,9 @@
 import 'package:collabhub/widgets/bottom_nav.dart' show BottomNav;
 import 'package:flutter/material.dart';
 import 'package:collabhub/features/settings/settings_screen.dart';
-import 'package:collabhub/models/project.dart'; // Import Project model
-import 'package:collabhub/core/project_service.dart'; // Import ProjectService
+import 'package:collabhub/models/project.dart';
+import 'package:collabhub/core/project_service.dart';
+import 'package:collabhub/core/notification_service.dart'; // Import notification service
 
 class ProjectListingsScreen extends StatefulWidget {
   const ProjectListingsScreen({super.key});
@@ -13,12 +14,12 @@ class ProjectListingsScreen extends StatefulWidget {
 
 class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final int _selectedIndex = 0; // Track the selected navigation item
-  final ProjectService _projectService =
-      ProjectService(); // Initialize ProjectService
+  final int _selectedIndex = 0;
+  final ProjectService _projectService = ProjectService();
 
   List<Project> _allProjects = [];
   List<Project> _filteredProjects = [];
+  final Set<String> _knownProjectIds = {}; //  Track project IDs
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -30,9 +31,20 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
 
   void _loadProjects() {
     try {
-      // We'll use a stream to listen to project updates
       _projectService.getAllProjects().listen(
         (projects) {
+          final newProjects = projects.where(
+            (project) => !_knownProjectIds.contains(project.id),
+          );
+
+          for (var project in newProjects) {
+            NotificationService.showNotification(
+              title: 'New Project Added',
+              body: project.title,
+            );
+            _knownProjectIds.add(project.id);
+          }
+
           setState(() {
             _allProjects = projects;
             _filteredProjects = projects;
@@ -56,17 +68,16 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
 
   void _filterProjects(String query) {
     setState(() {
-      if (query.isEmpty) {
-        _filteredProjects = _allProjects;
-      } else {
-        _filteredProjects =
-            _allProjects
-                .where(
-                  (project) =>
-                      project.title.toLowerCase().contains(query.toLowerCase()),
-                )
-                .toList();
-      }
+      _filteredProjects =
+          query.isEmpty
+              ? _allProjects
+              : _allProjects
+                  .where(
+                    (project) => project.title.toLowerCase().contains(
+                      query.toLowerCase(),
+                    ),
+                  )
+                  .toList();
     });
   }
 
@@ -100,7 +111,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                   child: ListView(
                     controller: controller,
                     children: [
-                      // Handle for dragging
                       Center(
                         child: Container(
                           width: 60,
@@ -112,8 +122,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                           margin: const EdgeInsets.only(bottom: 20),
                         ),
                       ),
-
-                      // Project Title
                       Text(
                         project.title,
                         style: Theme.of(
@@ -124,8 +132,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-
-                      // Summary Section
                       Text(
                         'Summary',
                         style: Theme.of(context).textTheme.titleMedium
@@ -139,8 +145,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                         ).textTheme.bodyLarge?.copyWith(height: 1.5),
                       ),
                       const SizedBox(height: 24),
-
-                      // Description Section
                       Text(
                         'Description',
                         style: Theme.of(context).textTheme.titleMedium
@@ -154,8 +158,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                         ).textTheme.bodyLarge?.copyWith(height: 1.5),
                       ),
                       const SizedBox(height: 24),
-
-                      // Skills Section
                       Text(
                         'Skills Required',
                         style: Theme.of(context).textTheme.titleMedium
@@ -185,8 +187,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                                 .toList(),
                       ),
                       const SizedBox(height: 32),
-
-                      // Link Section (if available)
                       if (project.link != null && project.link!.isNotEmpty) ...[
                         Text(
                           'Project Link',
@@ -203,8 +203,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                         ),
                         const SizedBox(height: 32),
                       ],
-
-                      // Join button at the bottom
                       ElevatedButton.icon(
                         onPressed: () {
                           Navigator.pop(context);
@@ -240,11 +238,9 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
         elevation: 0,
         centerTitle: true,
         actions: [
-          // Added Account Settings Icon Button
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // Navigate to Account Settings Page
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -273,10 +269,6 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
@@ -301,7 +293,7 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
 
   Widget _buildProjectsList() {
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_errorMessage != null) {
@@ -332,8 +324,8 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                 });
                 _loadProjects();
               },
-              icon: Icon(Icons.refresh),
-              label: Text('Retry'),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
             ),
           ],
         ),
@@ -408,7 +400,7 @@ class _ProjectListingsScreenState extends State<ProjectListingsScreen> {
                               .split(',')
                               .map((skill) => skill.trim())
                               .where((skill) => skill.isNotEmpty)
-                              .take(3) // Limit to 3 skills
+                              .take(3)
                               .map(
                                 (skill) => Chip(
                                   label: Text(skill),

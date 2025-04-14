@@ -4,10 +4,12 @@ import 'package:collabhub/features/projects/project_listings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:collabhub/core/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationService.initialize(); // Initialize here
   runApp(const MyApp());
 }
 
@@ -37,13 +39,13 @@ class MyApp extends StatelessWidget {
 
           if (snapshot.connectionState == ConnectionState.active) {
             if (snapshot.data == null) {
-              return LoginScreen();
+              return const LoginScreen();
             } else {
-              return ProjectListingsScreen();
+              return const ProjectListingsScreen();
             }
           }
 
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );
