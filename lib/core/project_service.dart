@@ -53,6 +53,21 @@ class ProjectService {
         });
   }
 
+  // Get all projects for current user
+  Stream<List<Project>> getAllProjects() {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      return Stream.value([]);
+    }
+
+    return _projectsCollection
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((doc) => Project.fromDocument(doc)).toList();
+        });
+  }
+
   // Delete project
   Future<void> deleteProject(String projectId) {
     return _projectsCollection.doc(projectId).delete();
