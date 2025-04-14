@@ -1,5 +1,3 @@
-// create a login user service
-// I want to use firebase auth email and password
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {

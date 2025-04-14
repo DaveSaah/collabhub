@@ -18,15 +18,15 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
   DateTime? _lastShakeTime;
   bool _isComposing = false;
-  
+
   // Firebase instances
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late Stream<QuerySnapshot> _thoughtsStream;
-  
+
   // Shake detection variables
-  static const double _shakeThreshold = 15.0;
-  
+  static const double _shakeThreshold = 100.0;
+
   // Track the selected navigation item
   final int _selectedIndex = 3; // Set to 3 to match the original chat position
 
@@ -34,24 +34,28 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
   void initState() {
     super.initState();
     _initAccelerometer();
-    
+
     // Initialize thoughts stream from Firestore
-    _thoughtsStream = _firestore
-        .collection('thoughts')
-        .orderBy('timestamp', descending: true)
-        .snapshots();
+    _thoughtsStream =
+        _firestore
+            .collection('thoughts')
+            .orderBy('timestamp', descending: true)
+            .snapshots();
   }
 
   void _initAccelerometer() {
     // Set up accelerometer for shake detection
-    _accelerometerSubscription = accelerometerEvents.listen((AccelerometerEvent event) {
+    _accelerometerSubscription = accelerometerEvents.listen((
+      AccelerometerEvent event,
+    ) {
       double acceleration = _calculateAcceleration(event);
       DateTime now = DateTime.now();
-      
+
       // Check if this is a shake and not just normal movement
       if (acceleration > _shakeThreshold) {
         // Prevent multiple triggers for the same shake
-        if (_lastShakeTime == null || now.difference(_lastShakeTime!).inMilliseconds > 1000) {
+        if (_lastShakeTime == null ||
+            now.difference(_lastShakeTime!).inMilliseconds > 1000) {
           _lastShakeTime = now;
           _handleShake();
         }
@@ -70,21 +74,13 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
       setState(() {
         _thoughtController.clear();
         _isComposing = false;
-        
-        // Show a feedback snackbar
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Thought cleared by shake!'),
-            duration: Duration(seconds: 1),
-          ),
-        );
       });
     }
   }
 
   Future<void> _addThought(String text) async {
     if (text.trim().isEmpty) return;
-    
+
     try {
       final User? user = _auth.currentUser;
       if (user == null) {
@@ -96,7 +92,7 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
         );
         return;
       }
-      
+
       await _firestore.collection('thoughts').add({
         'text': text,
         'authorId': user.uid,
@@ -104,12 +100,12 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
         'timestamp': FieldValue.serverTimestamp(),
         'likes': 0,
       });
-      
+
       _thoughtController.clear();
       setState(() {
         _isComposing = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Your thought has been shared!'),
@@ -166,15 +162,11 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
               stream: _thoughtsStream,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
+                  return Center(child: Text('Error: ${snapshot.error}'));
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -190,16 +182,14 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
                         const SizedBox(height: 16),
                         Text(
                           'No thoughts yet',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(color: Colors.grey[600]),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Be the first to share your thought!',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[500],
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: Colors.grey[500]),
                         ),
                       ],
                     ),
@@ -213,27 +203,32 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
                   itemBuilder: (context, index) {
                     final doc = snapshot.data!.docs[index];
                     final data = doc.data() as Map<String, dynamic>;
-                    
+
                     // Format timestamp
                     String timeDisplay = 'Just now';
                     if (data['timestamp'] != null) {
-                      final Timestamp timestamp = data['timestamp'] as Timestamp;
+                      final Timestamp timestamp =
+                          data['timestamp'] as Timestamp;
                       final DateTime dateTime = timestamp.toDate();
                       final DateTime now = DateTime.now();
                       final Duration difference = now.difference(dateTime);
-                      
+
                       if (difference.inDays > 0) {
-                        timeDisplay = '${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago';
+                        timeDisplay =
+                            '${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago';
                       } else if (difference.inHours > 0) {
-                        timeDisplay = '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
+                        timeDisplay =
+                            '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
                       } else if (difference.inMinutes > 0) {
-                        timeDisplay = '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'} ago';
+                        timeDisplay =
+                            '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'} ago';
                       }
                     }
-                    
+
                     // Check if post is by current user
-                    final bool isMe = _auth.currentUser?.uid == data['authorId'];
-                    
+                    final bool isMe =
+                        _auth.currentUser?.uid == data['authorId'];
+
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Card(
@@ -242,9 +237,12 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                           side: BorderSide(
-                            color: isMe
-                                ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
-                                : Colors.grey.withOpacity(0.2),
+                            color:
+                                isMe
+                                    ? Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.2),
                             width: 1,
                           ),
                         ),
@@ -257,11 +255,17 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
                                 children: [
                                   CircleAvatar(
                                     radius: 16,
-                                    backgroundColor: isMe
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Colors.blue[300],
+                                    backgroundColor:
+                                        isMe
+                                            ? Theme.of(
+                                              context,
+                                            ).colorScheme.primary
+                                            : Colors.blue[300],
                                     child: Text(
-                                      data['authorName'].toString().substring(0, 1),
+                                      data['authorName'].toString().substring(
+                                        0,
+                                        1,
+                                      ),
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -289,9 +293,7 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
                               const SizedBox(height: 12),
                               Text(
                                 data['text'],
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                ),
+                                style: const TextStyle(fontSize: 15),
                               ),
                               const SizedBox(height: 16),
                               Row(
@@ -315,7 +317,9 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
                                   ),
                                   const Spacer(),
                                   GestureDetector(
-                                    onTap: () => _toggleLike(doc.id, data['likes']),
+                                    onTap:
+                                        () =>
+                                            _toggleLike(doc.id, data['likes']),
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 12,
@@ -357,10 +361,7 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 10,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -389,20 +390,21 @@ class _ThoughtBoardScreenState extends State<ThoughtBoardScreen> {
                         horizontal: 20,
                         vertical: 10,
                       ),
-                      suffixIcon: _isComposing 
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Shake to clear',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 10,
+                      suffixIcon:
+                          _isComposing
+                              ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Shake to clear',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 10,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            )
-                          : null,
+                                ],
+                              )
+                              : null,
                     ),
                     textCapitalization: TextCapitalization.sentences,
                     minLines: 1,
