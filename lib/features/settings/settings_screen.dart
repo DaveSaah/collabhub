@@ -1,12 +1,16 @@
+import 'package:collabhub/core/auth_service.dart';
+import 'package:collabhub/features/auth/login_screen.dart';
+import 'package:collabhub/main.dart';
 import 'package:flutter/material.dart';
 import 'package:collabhub/features/settings/profile_screen.dart';
-
 
 class AccountSettingsPage extends StatelessWidget {
   const AccountSettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -27,7 +31,10 @@ class AccountSettingsPage extends StatelessWidget {
               // User Profile Header
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 30,
+                  horizontal: 20,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -57,21 +64,18 @@ class AccountSettingsPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'john.doe@example.com',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
-                        // Edit profile action
+                      onPressed: () async {
+                        await authService.signOut();
+                        MyApp.navigatorKey.currentState?.pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
+                        backgroundColor: Colors.deepPurple.withOpacity(0.5),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
@@ -81,14 +85,14 @@ class AccountSettingsPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: const Text('Edit Profile'),
+                      child: const Text('logout'),
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Account Settings Section
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -103,7 +107,7 @@ class AccountSettingsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              
+
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
@@ -129,7 +133,9 @@ class AccountSettingsPage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const ProfileView()),
+                          MaterialPageRoute(
+                            builder: (context) => const ProfileView(),
+                          ),
                         );
                       },
                     ),
@@ -163,9 +169,9 @@ class AccountSettingsPage extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Danger Zone
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -180,7 +186,7 @@ class AccountSettingsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              
+
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
@@ -204,17 +210,14 @@ class AccountSettingsPage extends StatelessWidget {
                   showChevron: false,
                 ),
               ),
-              
+
               // Footer
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 30),
                 alignment: Alignment.center,
                 child: Text(
                   '© 2025 Janvier',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[500],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                 ),
               ),
             ],
@@ -223,7 +226,7 @@ class AccountSettingsPage extends StatelessWidget {
       ),
     );
   }
-  
+
   // Settings Item Widget
   Widget _buildSettingsItem(
     BuildContext context, {
@@ -247,11 +250,7 @@ class AccountSettingsPage extends StatelessWidget {
                 color: iconColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: iconColor,
-                size: 24,
-              ),
+              child: Icon(icon, color: iconColor, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -268,19 +267,12 @@ class AccountSettingsPage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
               ),
             ),
-            if (showChevron)
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey[400],
-              ),
+            if (showChevron) Icon(Icons.chevron_right, color: Colors.grey[400]),
           ],
         ),
       ),
@@ -310,18 +302,12 @@ class AccountSettingsPage extends StatelessWidget {
               children: [
                 const Text(
                   'Change Password',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Please enter your current password and a new password.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 24),
                 _buildPasswordField(
@@ -348,10 +334,7 @@ class AccountSettingsPage extends StatelessWidget {
                       },
                       child: Text(
                         'Cancel',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.grey[700], fontSize: 16),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -444,10 +427,7 @@ class AccountSettingsPage extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Text(
                   'Delete Account',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -512,3 +492,4 @@ class AccountSettingsPage extends StatelessWidget {
     );
   }
 }
+
